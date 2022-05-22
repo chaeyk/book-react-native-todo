@@ -3,6 +3,9 @@ import { images } from "../images";
 import { theme } from "../theme";
 import IconButton from "./IconButton";
 import PropTypes from 'prop-types';
+import { ITaskItem } from "../ITaskItem";
+import { useState } from "react";
+import Input from "./Input";
 
 interface IThemeProps {
 	theme?: typeof theme;
@@ -29,32 +32,56 @@ const Contents = styled.Text`
 	text-decoration-line: ${(props: ITextProps) => props.completed ? 'line-through' : 'none'};
 `;
 
-interface ITaskItem {
-	id: string;
-	text: string;
-	completed: boolean;
-}
-
 interface ITaskProps {
 	item: ITaskItem,
-	deleteTask: (id: string) => void,
-	toggleTask: (id: string) => void,
+	deleteTask: (item: ITaskItem) => void,
+	toggleTask: (item: ITaskItem) => void,
+	updateTask: (item: ITaskItem) => void,
 }
 
 const Task = (props: ITaskProps) => {
-	return (
+	const [isEditing, setIsEditing] = useState(false);
+	const [text, setText] = useState(props.item.text);
+
+	const _handleUpdateButtonPress = () => {
+		setIsEditing(true);
+	}
+
+	const _onSubmitEditing = () => {
+		if (isEditing) {
+			const editedTask = Object.assign({}, props.item, { text });
+			setIsEditing(false);
+			props.updateTask(editedTask);
+		}
+	}
+
+	const _onBlur = () => {
+		if (isEditing) {
+			setIsEditing(false);
+			setText(props.item.text);
+		}
+	};
+
+	return isEditing ? (
+		<Input
+			value={text}
+			onChangeText={(newText: string) => setText(newText)}
+			onSubmitEditing={_onSubmitEditing}
+			onBlur={_onBlur}
+		/>
+	) : (
 		<Container>
 			<IconButton
 				type={props.item.completed ? images.completed : images.uncompleted}
-				id={props.item.id}
+				item={props.item}
 				onIconClick={props.toggleTask}
 				completed={props.item.completed}
 			/>
 			<Contents completed={props.item.completed}>{props.item.text}</Contents>
-			{props.item.completed || <IconButton type={images.update} id={props.item.id} />}
+			{props.item.completed || <IconButton type={images.update} item={props.item} onIconClick={_handleUpdateButtonPress} completed={false} />}
 			<IconButton
 				type={images.delete}
-				id={props.item.id}
+				item={props.item}
 				onIconClick={props.deleteTask}
 				completed={props.item.completed}
 			/>
@@ -66,6 +93,7 @@ Task.propTypes = {
 	item: PropTypes.object.isRequired,
 	deleteTask: PropTypes.func.isRequired,
 	toggleTask: PropTypes.func.isRequired,
+	updateTask: PropTypes.func.isRequired,
 }
 
 export default Task;

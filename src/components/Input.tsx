@@ -35,6 +35,7 @@ const Input = (props: TextInputProps) => {
 			value={props.value}
 			onChangeText={props.onChangeText}
 			onSubmitEditing={props.onSubmitEditing}
+			onBlur={props.onBlur}
 		/>
 	);
 };
@@ -44,6 +45,7 @@ Input.propTypes = {
 	value: PropTypes.string.isRequired,
 	onChangeText: PropTypes.func.isRequired,
 	onSubmitEditing: PropTypes.func.isRequired,
+	onBlur: PropTypes.func.isRequired,
 }
 
 export default Input;

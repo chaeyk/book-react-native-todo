@@ -3,6 +3,7 @@ import styled from "styled-components/native";
 import { theme } from "../theme";
 import PropTypes from 'prop-types';
 import { images } from '../images';
+import { ITaskItem } from "../ITaskItem";
 
 interface IImageProps {
 	theme?: typeof theme;
@@ -18,14 +19,14 @@ const Icon = styled.Image`
 
 interface IIconButtonProps extends PressableProps {
 	type: any;
-	id: string;
-	onIconClick: (id: string) => void;
+	item: ITaskItem;
+	onIconClick: (item: ITaskItem) => void;
 	completed: boolean;
 }
 
 const IconButton = (props: IIconButtonProps) => {
 	const _onPressOut = () => {
-		props.onIconClick(props.id);
+		props.onIconClick(props.item);
 	}
 	return (
 		<Pressable onPressOut={_onPressOut}>
@@ -34,9 +35,13 @@ const IconButton = (props: IIconButtonProps) => {
 	);
 };
 
+class Test {
+	public id: string = 'hi';
+}
+
 IconButton.propTypes = {
 	type: PropTypes.oneOf(Object.values(images)).isRequired,
-	id: PropTypes.string.isRequired,
+	item: PropTypes.object.isRequired,
 	onIconClick: PropTypes.func.isRequired,
 	completed: PropTypes.bool.isRequired,
 }
